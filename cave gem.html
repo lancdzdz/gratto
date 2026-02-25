@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍷 Ma Cave de Prestige</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f0f; color: #e0e0e0; }
+        .header { background: #000; padding: 3rem; text-align: center; border-bottom: 2px solid #c5a059; }
+        .header h1 { color: #c5a059; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 4px; }
+        .nav-container { background: #1a1a1a; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333; }
+        .nav-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 1rem; }
+        .nav-btn { padding: 0.8rem 1.2rem; border: 1px solid #c5a059; background: transparent; color: #c5a059; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+        .nav-btn:hover, .nav-btn.active { background: #c5a059; color: #000; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .beverage-type-section { display: none; }
+        .beverage-type-section.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .region-divider { color: #c5a059; font-size: 1.5rem; margin: 2rem 0 1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+        .beverages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .beverage-card { background: #1a1a1a; border-radius: 8px; overflow: hidden; border: 1px solid #333; cursor: pointer; transition: 0.3s; }
+        .beverage-card:hover { transform: translateY(-5px); border-color: #c5a059; }
+        .beverage-image { width: 100%; height: 180px; background-size: cover; background-position: center; }
+        .beverage-content { padding: 1.2rem; }
+        .beverage-appellation { color: #c5a059; font-size: 1.2rem; font-weight: bold; margin-bottom: 0.4rem; }
+        .beverage-chateau { color: #888; font-style: italic; margin-bottom: 1rem; }
+        .beverage-details { display: flex; justify-content: space-between; font-size: 0.9rem; border-top: 1px solid #333; padding-top: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>🍷 Ma Cave de Prestige</h1></div>
+    <div class="nav-container"><div class="nav-menu" id="navMenu"></div></div>
+    <div class="container" id="beverageTypesContainer"></div>
+
+    <script>
+        // RÉFÉRENCES RÉINTÉGRÉES
+        const winesData = {
+            "Vin rouge/blanc": {
+                "Gironde": [
+                    { "chateau": "Bouscaut", "appellation": "Château Bouscaut Grand Cru", "year": "2018", "quantity": "4 bouteilles" },
+                    { "chateau": "Maucaillou", "appellation": "Moulis", "year": "2018", "quantity": "6 bouteilles" }
+                ],
+                "Bordeaux": [
+                    { "chateau": "Château des moines", "appellation": "Lalande de Pomerol", "year": "2022", "quantity": "1 bouteille" },
+                    { "chateau": "Château Rieussec", "appellation": "Sauterne", "year": "1997", "quantity": "2 bouteilles" }
+                ]
+            },
+            "Rosé": {
+                "Provence": [{ "chateau": "Gilardi", "appellation": "Bailli de Provence", "year": "2024", "quantity": "1 bouteille" }]
+            },
+            "Champagne": {
+                "Epernay": [{ "chateau": "Besserat de Bellefon", "appellation": "Blanc de Blancs", "year": "NV", "quantity": "1 bouteille" }]
+            },
+            "Bière": {
+                "Belgique": [{ "chateau": "Brasserie Chouffe", "appellation": "La Chouffe", "year": "NV", "quantity": "1 bouteille" }],
+                "France": [{ "chateau": "La Debauche", "appellation": "Sweet Sorrows", "year": "NV", "quantity": "1 bouteille" }]
+            },
+            "Calvados": {
+                "Normandie": [{ "chateau": "Les Caves Chatels", "appellation": "Vieux Calvados", "year": "NV", "quantity": "10 bouteilles" }]
+            }
+        };
+
+        const photos = {
+            "Vin rouge/blanc": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600",
+            "Rosé": "https://images.unsplash.com/photo-1558001373-7b93ee48ffa0?w=600",
+            "Champagne": "https://images.unsplash.com/photo-1594494024040-3c45aff65f5d?w=600",
+            "Bière": "https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=600",
+            "Calvados": "https://images.unsplash.com/photo-1551008475-4533d141445b?w=600"
+        };
+
+        function init() {
+            const nav = document.getElementById('navMenu');
+            const container = document.getElementById('beverageTypesContainer');
+            Object.keys(winesData).forEach(type => {
+                nav.innerHTML += `<button class="nav-btn" onclick="showType('${type}')">${type}</button>`;
+                let content = `<div id="type-${type.replace(/\s/g, '')}" class="beverage-type-section">`;
+                Object.entries(winesData[type]).forEach(([region, items]) => {
+                    content += `<div class="region-divider">📍 ${region}</div><div class="beverages-grid">`;
+                    items.forEach(item => {
+                        content += `
+                            <div class="beverage-card">
+                                <div class="beverage-image" style="background-image:url('${photos[type] || photos["Vin rouge/blanc"]}')"></div>
+                                <div class="beverage-content">
+                                    <div class="beverage-appellation">${item.appellation}</div>
+                                    <div class="beverage-chateau">🏰 ${item.chateau}</div>
+                                    <div class="beverage-details"><span>📅 ${item.year}</span><span style="color:#c5a059; font-weight:bold;">${item.quantity}</span></div>
+                                </div>
+                            </div>`;
+                    });
+                    content += `</div>`;
+                });
+                container.innerHTML += content + `</div>`;
+            });
+            showType(Object.keys(winesData)[0]);
+        }
+
+        function showType(type) {
+            document.querySelectorAll('.beverage-type-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`type-${type.replace(/\s/g, '')}`).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.innerText === type));
+        }
+
+        init();
+    </script>
+</body>
+</html>
